@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Manajemen Transportasi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 700;
+            background: blue;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid blue;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: blue;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button {
+            background: blue;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .vehicle-card, .customer-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #28a745;
+            transition: all 0.3s ease;
+        }
+
+        .vehicle-card:hover, .customer-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .vehicle-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .info-item {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 3px solid blue;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #555;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            color: #333;
+            font-size: 14px;
+            margin-top: 2px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status.tersedia {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.disewa {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+            font-style: italic;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: blue;
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .form-group {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚗 Sistem Manajemen Transportasi</h1>
+        
+        <!-- Statistics -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalKendaraan">0</div>
+                <div class="stat-label">Total Kendaraan</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="kendaraanTersedia">0</div>
+                <div class="stat-label">Tersedia</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="kendaraanDisewa">0</div>
+                <div class="stat-label">Sedang Disewa</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalPelanggan">0</div>
+                <div class="stat-label">Total Pelanggan</div>
+            </div>
+        </div>
+
+        <!-- Tambah Kendaraan -->
+        <div class="section">
+            <h2>🚙 Tambah Kendaraan Baru</h2>
+            <div class="form-group">
+                <div class="input-group">
+                    <label for="jenisKendaraan">Jenis Kendaraan:</label>
+                    <select id="jenisKendaraan">
+                        <option value="mobil">Mobil</option>
+                        <option value="motor">Motor</option>
+                        <option value="truk">Truk</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="merkKendaraan">Merk:</label>
+                    <input type="text" id="merkKendaraan" placeholder="Contoh: Toyota, Honda">
+                </div>
+                <div class="input-group">
+                    <label for="modelKendaraan">Model:</label>
+                    <input type="text" id="modelKendaraan" placeholder="Contoh: Avanza, Beat">
+                </div>
+                <div class="input-group">
+                    <label for="nomorPolisi">Nomor Polisi:</label>
+                    <input type="text" id="nomorPolisi" placeholder="Contoh: B 1234 ABC">
+                </div>
+                <div class="input-group">
+                    <label for="hargaSewa">Harga Sewa (per hari):</label>
+                    <input type="number" id="hargaSewa" placeholder="Contoh: 250000">
+                </div>
+            </div>
+            <button onclick="tambahKendaraan()">Tambah Kendaraan</button>
+            <div id="successKendaraan" class="success-message"></div>
+        </div>
+
+        <!-- Sewa Kendaraan -->
+        <div class="section">
+            <h2>👤 Sewa Kendaraan</h2>
+            <div class="form-group">
+                <div class="input-group">
+                    <label for="namaPelanggan">Nama Pelanggan:</label>
+                    <input type="text" id="namaPelanggan" placeholder="Masukkan nama pelanggan">
+                </div>
+                <div class="input-group">
+                    <label for="nomorTelepon">Nomor Telepon:</label>
+                    <input type="text" id="nomorTelepon" placeholder="Contoh: 08123456789">
+                </div>
+                <div class="input-group">
+                    <label for="pilihKendaraan">Pilih Kendaraan:</label>
+                    <select id="pilihKendaraan">
+                        <option value="">-- Pilih Kendaraan --</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="lamaSewaHari">Lama Sewa (hari):</label>
+                    <input type="number" id="lamaSewaHari" placeholder="Contoh: 3" min="1">
+                </div>
+            </div>
+            <button onclick="sewaKendaraan()">Sewa Kendaraan</button>
+            <div id="successSewa" class="success-message"></div>
+        </div>
+
+        <!-- Daftar Kendaraan -->
+        <div class="section">
+            <h2>🚗 Daftar Kendaraan</h2>
+            <div id="daftarKendaraan"></div>
+        </div>
+
+        <!-- Daftar Pelanggan -->
+        <div class="section">
+            <h2>👥 Daftar Pelanggan yang Menyewa</h2>
+            <div id="daftarPelanggan"></div>
+        </div>
+    </div>
+
+    <script>
+        // Class Kendaraan (Parent Class)
+        class Kendaraan {
+            constructor(merk, model, nomorPolisi, hargaSewa) {
+                this.merk = merk;
+                this.model = model;
+                this.nomorPolisi = nomorPolisi;
+                this.hargaSewa = hargaSewa;
+                this.statusSewa = false;
+                this.penyewa = null;
+            }
+
+            // Method untuk menyewa kendaraan
+            sewa(pelanggan) {
+                if (!this.statusSewa) {
+                    this.statusSewa = true;
+                    this.penyewa = pelanggan;
+                    return true;
+                }
+                return false;
+            }
+
+            // Method untuk mengembalikan kendaraan
+            kembalikan() {
+                this.statusSewa = false;
+                this.penyewa = null;
+            }
+
+            // Method untuk mendapatkan info kendaraan
+            getInfo() {
+                return {
+                    jenis: this.constructor.name,
+                    merk: this.merk,
+                    model: this.model,
+                    nomorPolisi: this.nomorPolisi,
+                    hargaSewa: this.hargaSewa,
+                    status: this.statusSewa ? 'Disewa' : 'Tersedia',
+                    penyewa: this.penyewa
+                };
+            }
+        }
+
+        // Class Mobil (Child Class)
+        class Mobil extends Kendaraan {
+            constructor(merk, model, nomorPolisi, hargaSewa) {
+                super(merk, model, nomorPolisi, hargaSewa);
+                this.jenis = 'Mobil';
+                this.kapasitas = '4-7 penumpang';
+            }
+
+            getInfo() {
+                const info = super.getInfo();
+                info.kapasitas = this.kapasitas;
+                return info;
+            }
+        }
+
+        // Class Motor (Child Class)
+        class Motor extends Kendaraan {
+            constructor(merk, model, nomorPolisi, hargaSewa) {
+                super(merk, model, nomorPolisi, hargaSewa);
+                this.jenis = 'Motor';
+                this.kapasitas = '1-2 penumpang';
+            }
+
+            getInfo() {
+                const info = super.getInfo();
+                info.kapasitas = this.kapasitas;
+                return info;
+            }
+        }
+
+        // Class Truk (Child Class)
+        class Truk extends Kendaraan {
+            constructor(merk, model, nomorPolisi, hargaSewa) {
+                super(merk, model, nomorPolisi, hargaSewa);
+                this.jenis = 'Truk';
+                this.kapasitas = 'Angkut barang';
+            }
+
+            getInfo() {
+                const info = super.getInfo();
+                info.kapasitas = this.kapasitas;
+                return info;
+            }
+        }
+
+        // Class Pelanggan
+        class Pelanggan {
+            constructor(nama, nomorTelepon) {
+                this.nama = nama;
+                this.nomorTelepon = nomorTelepon;
+                this.kendaraanDisewa = [];
+                this.riwayatSewa = [];
+            }
+
+            // Method untuk mencatat transaksi penyewaan
+            sewaKendaraan(kendaraan, lamaSewa) {
+                if (kendaraan.sewa(this)) {
+                    const transaksi = {
+                        kendaraan: kendaraan,
+                        tanggalSewa: new Date(),
+                        lamaSewa: lamaSewa,
+                        totalBiaya: kendaraan.hargaSewa * lamaSewa
+                    };
+                    
+                    this.kendaraanDisewa.push(transaksi);
+                    this.riwayatSewa.push(transaksi);
+                    return transaksi;
+                }
+                return null;
+            }
+
+            // Method untuk mengembalikan kendaraan
+            kembalikanKendaraan(kendaraan) {
+                this.kendaraanDisewa = this.kendaraanDisewa.filter(
+                    transaksi => transaksi.kendaraan !== kendaraan
+                );
+                kendaraan.kembalikan();
+            }
+
+            // Method untuk mendapatkan info pelanggan
+            getInfo() {
+                return {
+                    nama: this.nama,
+                    nomorTelepon: this.nomorTelepon,
+                    jumlahKendaraanDisewa: this.kendaraanDisewa.length,
+                    kendaraanDisewa: this.kendaraanDisewa
+                };
+            }
+        }
+
+        // Class SistemManajemenTransportasi
+        class SistemManajemenTransportasi {
+            constructor() {
+                this.daftarKendaraan = [];
+                this.daftarPelanggan = [];
+            }
+
+            // Method untuk menambah kendaraan
+            tambahKendaraan(jenisKendaraan, merk, model, nomorPolisi, hargaSewa) {
+                let kendaraan;
+                
+                switch(jenisKendaraan.toLowerCase()) {
+                    case 'mobil':
+                        kendaraan = new Mobil(merk, model, nomorPolisi, hargaSewa);
+                        break;
+                    case 'motor':
+                        kendaraan = new Motor(merk, model, nomorPolisi, hargaSewa);
+                        break;
+                    case 'truk':
+                        kendaraan = new Truk(merk, model, nomorPolisi, hargaSewa);
+                        break;
+                    default:
+                        return false;
+                }
+                
+                this.daftarKendaraan.push(kendaraan);
+                return kendaraan;
+            }
+
+            // Method untuk mencari atau membuat pelanggan
+            cariAtauBuatPelanggan(nama, nomorTelepon) {
+                let pelanggan = this.daftarPelanggan.find(p => 
+                    p.nama === nama && p.nomorTelepon === nomorTelepon
+                );
+                
+                if (!pelanggan) {
+                    pelanggan = new Pelanggan(nama, nomorTelepon);
+                    this.daftarPelanggan.push(pelanggan);
+                }
+                
+                return pelanggan;
+            }
+
+            // Method untuk menyewa kendaraan
+            prosesSewaKendaraan(namaPelanggan, nomorTelepon, nomorPolisi, lamaSewa) {
+                const kendaraan = this.daftarKendaraan.find(k => k.nomorPolisi === nomorPolisi);
+                
+                if (!kendaraan) {
+                    return { success: false, message: 'Kendaraan tidak ditemukan' };
+                }
+                
+                if (kendaraan.statusSewa) {
+                    return { success: false, message: 'Kendaraan sedang disewa' };
+                }
+                
+                const pelanggan = this.cariAtauBuatPelanggan(namaPelanggan, nomorTelepon);
+                const transaksi = pelanggan.sewaKendaraan(kendaraan, lamaSewa);
+                
+                if (transaksi) {
+                    return { 
+                        success: true, 
+                        message: `Kendaraan berhasil disewa oleh ${pelanggan.nama}`,
+                        transaksi: transaksi
+                    };
+                } else {
+                    return { success: false, message: 'Gagal menyewa kendaraan' };
+                }
+            }
+
+            // Method untuk mendapatkan kendaraan tersedia
+            getKendaraanTersedia() {
+                return this.daftarKendaraan.filter(k => !k.statusSewa);
+            }
+
+            // Method untuk mendapatkan pelanggan yang sedang menyewa
+            getPelangganYangMenyewa() {
+                return this.daftarPelanggan.filter(p => p.kendaraanDisewa.length > 0);
+            }
+
+            // Method untuk mendapatkan statistik
+            getStatistik() {
+                const totalKendaraan = this.daftarKendaraan.length;
+                const kendaraanTersedia = this.getKendaraanTersedia().length;
+                const kendaraanDisewa = totalKendaraan - kendaraanTersedia;
+                const totalPelanggan = this.daftarPelanggan.length;
+                
+                return {
+                    totalKendaraan,
+                    kendaraanTersedia,
+                    kendaraanDisewa,
+                    totalPelanggan
+                };
+            }
+        }
+
+        // Inisialisasi sistem
+        const sistem = new SistemManajemenTransportasi();
+
+        // Fungsi untuk menambah kendaraan
+        function tambahKendaraan() {
+            const jenis = document.getElementById('jenisKendaraan').value;
+            const merk = document.getElementById('merkKendaraan').value;
+            const model = document.getElementById('modelKendaraan').value;
+            const nomorPolisi = document.getElementById('nomorPolisi').value;
+            const hargaSewa = parseInt(document.getElementById('hargaSewa').value);
+
+            if (!merk || !model || !nomorPolisi || !hargaSewa) {
+                alert('Semua field harus diisi!');
+                return;
+            }
+
+            const kendaraan = sistem.tambahKendaraan(jenis, merk, model, nomorPolisi, hargaSewa);
+            
+            if (kendaraan) {
+                // Clear form
+                document.getElementById('merkKendaraan').value = '';
+                document.getElementById('modelKendaraan').value = '';
+                document.getElementById('nomorPolisi').value = '';
+                document.getElementById('hargaSewa').value = '';
+                
+                // Show success message
+                const successDiv = document.getElementById('successKendaraan');
+                successDiv.textContent = `Kendaraan ${merk} ${model} berhasil ditambahkan!`;
+                successDiv.style.display = 'block';
+                setTimeout(() => {
+                    successDiv.style.display = 'none';
+                }, 3000);
+                
+                // Update displays
+                updateDisplay();
+            }
+        }
+
+        // Fungsi untuk menyewa kendaraan
+        function sewaKendaraan() {
+            const nama = document.getElementById('namaPelanggan').value;
+            const telepon = document.getElementById('nomorTelepon').value;
+            const nomorPolisi = document.getElementById('pilihKendaraan').value;
+            const lamaSewa = parseInt(document.getElementById('lamaSewaHari').value);
+
+            if (!nama || !telepon || !nomorPolisi || !lamaSewa) {
+                alert('Semua field harus diisi!');
+                return;
+            }
+
+            const result = sistem.prosesSewaKendaraan(nama, telepon, nomorPolisi, lamaSewa);
+            
+            if (result.success) {
+                // Clear form
+                document.getElementById('namaPelanggan').value = '';
+                document.getElementById('nomorTelepon').value = '';
+                document.getElementById('pilihKendaraan').value = '';
+                document.getElementById('lamaSewaHari').value = '';
+                
+                // Show success message
+                const successDiv = document.getElementById('successSewa');
+                successDiv.innerHTML = `
+                    ${result.message}<br>
+                    Total biaya: Rp ${result.transaksi.totalBiaya.toLocaleString('id-ID')}
+                `;
+                successDiv.style.display = 'block';
+                setTimeout(() => {
+                    successDiv.style.display = 'none';
+                }, 5000);
+                
+                // Update displays
+                updateDisplay();
+            } else {
+                alert(result.message);
+            }
+        }
+
+        // Fungsi untuk update display
+        function updateDisplay() {
+            updateStatistik();
+            updateDaftarKendaraan();
+            updateDaftarPelanggan();
+            updatePilihanKendaraan();
+        }
+
+        // Update statistik
+        function updateStatistik() {
+            const stats = sistem.getStatistik();
+            document.getElementById('totalKendaraan').textContent = stats.totalKendaraan;
+            document.getElementById('kendaraanTersedia').textContent = stats.kendaraanTersedia;
+            document.getElementById('kendaraanDisewa').textContent = stats.kendaraanDisewa;
+            document.getElementById('totalPelanggan').textContent = stats.totalPelanggan;
+        }
+
+        // Update daftar kendaraan
+        function updateDaftarKendaraan() {
+            const container = document.getElementById('daftarKendaraan');
+            
+            if (sistem.daftarKendaraan.length === 0) {
+                container.innerHTML = '<div class="empty-state">Belum ada kendaraan yang terdaftar</div>';
+                return;
+            }
+
+            container.innerHTML = sistem.daftarKendaraan.map(kendaraan => {
+                const info = kendaraan.getInfo();
+                return `
+                    <div class="vehicle-card">
+                        <div class="vehicle-info">
+                            <div class="info-item">
+                                <div class="info-label">Jenis</div>
+                                <div class="info-value">${info.jenis}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Merk & Model</div>
+                                <div class="info-value">${info.merk} ${info.model}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Nomor Polisi</div>
+                                <div class="info-value">${info.nomorPolisi}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Harga Sewa</div>
+                                <div class="info-value">Rp ${info.hargaSewa.toLocaleString('id-ID')}/hari</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Kapasitas</div>
+                                <div class="info-value">${info.kapasitas || '-'}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Status</div>
+                                <div class="info-value">
+                                    <span class="status ${info.status === 'Tersedia' ? 'tersedia' : 'disewa'}">
+                                        ${info.status}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        ${info.penyewa ? `
+                            <div style="margin-top: 10px; padding: 10px; background: #fff3cd; border-radius: 5px;">
+                                <strong>Disewa oleh:</strong> ${info.penyewa.nama} (${info.penyewa.nomorTelepon})
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update daftar pelanggan
+        function updateDaftarPelanggan() {
+            const container = document.getElementById('daftarPelanggan');
+            const pelangganAktif = sistem.getPelangganYangMenyewa();
+            
+            if (pelangganAktif.length === 0) {
+                container.innerHTML = '<div class="empty-state">Tidak ada pelanggan yang sedang menyewa kendaraan</div>';
+                return;
+            }
+
+            container.innerHTML = pelangganAktif.map(pelanggan => {
+                const info = pelanggan.getInfo();
+                return `
+                    <div class="customer-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h3 style="margin: 0; color: #333;">${info.nama}</h3>
+                            <span class="status disewa">${info.jumlahKendaraanDisewa} kendaraan</span>
+                        </div>
+                        <div class="info-item" style="margin-bottom: 15px;">
+                            <div class="info-label">Nomor Telepon</div>
+                            <div class="info-value">${info.nomorTelepon}</div>
+                        </div>
+                        <div>
+                            <strong>Kendaraan yang disewa:</strong>
+                            ${info.kendaraanDisewa.map(transaksi => {
+                                const kendaraan = transaksi.kendaraan;
+                                return `
+                                    <div style="background: white; padding: 10px; margin: 5px 0; border-radius: 5px; border-left: 3px solid #28a745;">
+                                        <div><strong>${kendaraan.merk} ${kendaraan.model}</strong> (${kendaraan.nomorPolisi})</div>
+                                        <div>Lama sewa: ${transaksi.lamaSewa} hari</div>
+                                        <div>Total biaya: Rp ${transaksi.totalBiaya.toLocaleString('id-ID')}</div>
+                                        <div>Tanggal sewa: ${transaksi.tanggalSewa.toLocaleDateString('id-ID')}</div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update pilihan kendaraan untuk form sewa
+        function updatePilihanKendaraan() {
+            const select = document.getElementById('pilihKendaraan');
+            const kendaraanTersedia = sistem.getKendaraanTersedia();
+            
+            select.innerHTML = '<option value="">-- Pilih Kendaraan --</option>';
+            
+            kendaraanTersedia.forEach(kendaraan => {
+                const option = document.createElement('option');
+                option.value = kendaraan.nomorPolisi;
+                option.textContent = `${kendaraan.merk} ${kendaraan.model} (${kendaraan.nomorPolisi}) - Rp ${kendaraan.hargaSewa.toLocaleString('id-ID')}/hari`;
+                select.appendChild(option);
+            });
+        }
+
+        // Inisialisasi awal
+        updateDisplay();
+
+        // Fungsi tambahan untuk mengembalikan kendaraan
+        function kembalikanKendaraan(nomorPolisi) {
+            const kendaraan = sistem.daftarKendaraan.find(k => k.nomorPolisi === nomorPolisi);
+            if (kendaraan && kendaraan.statusSewa) {
+                const pelanggan = kendaraan.penyewa;
+                pelanggan.kembalikanKendaraan(kendaraan);
+                updateDisplay();
+                alert(`Kendaraan ${kendaraan.merk} ${kendaraan.model} berhasil dikembalikan!`);
+            }
+        }
+
+        // Fungsi untuk mencari kendaraan
+        function cariKendaraan(keyword) {
+            const hasil = sistem.daftarKendaraan.filter(k => 
+                k.merk.toLowerCase().includes(keyword.toLowerCase()) ||
+                k.model.toLowerCase().includes(keyword.toLowerCase()) ||
+                k.nomorPolisi.toLowerCase().includes(keyword.toLowerCase())
+            );
+            return hasil;
+        }
+
+        // Demo data (opsional)
+        function loadDemoData() {
+            sistem.tambahKendaraan('mobil', 'Toyota', 'Avanza', 'B 1234 ABC', 250000);
+            sistem.tambahKendaraan('mobil', 'Honda', 'Brio', 'B 5678 DEF', 200000);
+            sistem.tambahKendaraan('motor', 'Honda', 'Beat', 'B 9012 GHI', 75000);
+            sistem.tambahKendaraan('motor', 'Yamaha', 'Mio', 'B 3456 JKL', 70000);
+            sistem.tambahKendaraan('truk', 'Isuzu', 'Elf', 'B 7890 MNO', 400000);
+            
+            // Demo sewa kendaraan
+            sistem.prosesSewaKendaraan('Ivan Pria', '08123456789', 'B 1234 ABC', 3);
+            sistem.prosesSewaKendaraan('Sudrajad', '08987654321', 'B 9012 GHI', 2);
+            
+            updateDisplay();
+        }
+
+    </script>
+</body>
+</html>
